@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>WIRELESS DIRECT NEURAL ATTACK — Cyberpunk RED</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
+
+@page {
+  size: A4;
+  margin: 1.5cm;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #0a0a0f;
+  color: #d0d0d0;
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
+  line-height: 1.5;
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* CRT-эффект для экрана */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0) 0px,
+    rgba(0, 0, 0, 0) 2px,
+    rgba(0, 255, 0, 0.015) 3px,
+    rgba(0, 0, 0, 0) 4px
+  );
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Сканлайны сверху при загрузке */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 0, 255, 0.03) 0%,
+    transparent 50%
+  );
+  pointer-events: none;
+  z-index: 999;
+}
+
+h1 {
+  font-family: 'Orbitron', 'Courier New', monospace;
+  font-size: 2.8em;
+  color: #FFD600;
+  text-align: center;
+  margin: 30px 0 10px;
+  text-shadow: 
+    0 0 5px #FFD600,
+    0 0 10px #FFD600,
+    0 0 20px rgba(255, 214, 0, 0.5),
+    3px 3px 0 #FF00FF;
+  letter-spacing: 3px;
+  font-weight: 900;
+  border: 2px solid #FFD600;
+  padding: 20px;
+  background: rgba(255, 214, 0, 0.05);
+  position: relative;
+}
+
+h1::before {
+  content: "▌▌▌";
+  position: absolute;
+  left: -50px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #00FFFF;
+  animation: blink 1.5s infinite;
+}
+
+h1::after {
+  content: "▌▌▌";
+  position: absolute;
+  right: -50px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #00FFFF;
+  animation: blink 1.5s infinite reverse;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+h2 {
+  font-family: 'Orbitron', 'Courier New', monospace;
+  font-size: 1.8em;
+  color: #00FFFF;
+  margin: 35px 0 15px;
+  text-shadow: 
+    0 0 5px #00FFFF,
+    0 0 10px rgba(0, 255, 255, 0.5);
+  border-bottom: 2px solid #00FFFF;
+  padding-bottom: 8px;
+  letter-spacing: 2px;
+}
+
+h3 {
+  font-family: 'Orbitron', 'Courier New', monospace;
+  font-size: 1.3em;
+  color: #FF00FF;
+  margin: 25px 0 10px;
+  text-shadow: 0 0 5px rgba(255, 0, 255, 0.7);
+  letter-spacing: 1px;
+}
+
+h4 {
+  font-family: 'Orbitron', 'Courier New', monospace;
+  color: #FFD600;
+  font-size: 1.1em;
+  margin: 15px 0 8px;
+  letter-spacing: 1px;
+}
+
+p, li {
+  font-size: 0.95em;
+  margin-bottom: 8px;
+}
+
+ul, ol {
+  margin-left: 25px;
+  margin-bottom: 15px;
+}
+
+li {
+  margin-bottom: 5px;
+}
+
+strong {
+  color: #FFD600;
+  text-shadow: 0 0 3px rgba(255, 214, 0, 0.5);
+}
+
+em {
+  color: #00FFFF;
+  font-style: normal;
+}
+
+code {
+  background: rgba(0, 255, 255, 0.1);
+  color: #00FFFF;
+  padding: 2px 6px;
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.9em;
+}
+
+/* Таблицы */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid #00FFFF;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+}
+
+th {
+  background: linear-gradient(180deg, #00FFFF 0%, #008B8B 100%);
+  color: #000;
+  padding: 10px;
+  text-align: left;
+  font-family: 'Orbitron', monospace;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-size: 0.9em;
+}
+
+td {
+  padding: 8px 10px;
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  font-size: 0.9em;
+}
+
+tr:nth-child(even) {
+  background: rgba(0, 255, 255, 0.03);
+}
+
+tr:hover {
+  background: rgba(255, 0, 255, 0.1);
+}
+
+/* Цитата */
+blockquote {
+  border-left: 4px solid #FF00FF;
+  background: rgba(255, 0, 255, 0.05);
+  padding: 15px 20px;
+  margin: 20px 0;
+  font-style: italic;
+  color: #FF00FF;
+  text-shadow: 0 0 3px rgba(255, 0, 255, 0.5);
+  position: relative;
+}
+
+blockquote::before {
+  content: "❝";
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  font-size: 2em;
+  color: rgba(255, 0, 255, 0.3);
+}
+
+/* Горизонтальная линия */
+hr {
+  border: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #FF00FF, transparent);
+  margin: 30px 0;
+  box-shadow: 0 0 10px #FF00FF;
+}
+
+/* Блоки-подсказки */
+.alert {
+  border: 1px solid #FF00FF;
+  background: rgba(255, 0, 255, 0.05);
+  padding: 15px;
+  margin: 20px 0;
+  position: relative;
+}
+
+.alert::before {
+  content: "⚠ СИСТЕМНОЕ СООБЩЕНИЕ";
+  position: absolute;
+  top: -10px;
+  left: 10px;
+  background: #0a0a0f;
+  padding: 0 10px;
+  color: #FF00FF;
+  font-weight: bold;
+  font-size: 0.8em;
+  letter-spacing: 1px;
+}
+
+.terminal {
+  background: #000;
+  color: #00FF00;
+  border: 1px solid #00FF00;
+  padding: 15px;
+  margin: 15px 0;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.9em;
+  box-shadow: inset 0 0 20px rgba(0, 255, 0, 0.2);
+  position: relative;
+}
+
+.terminal::before {
+  content: "TERMINAL://WDNA_v1.0";
+  position: absolute;
+  top: -10px;
+  right: 10px;
+  background: #0a0a0f;
+  padding: 0 10px;
+  color: #00FF00;
+  font-size: 0.8em;
+}
+
+/* Спецсимволы */
+.glow-yellow { color: #FFD600; text-shadow: 0 0 5px #FFD600; }
+.glow-cyan { color: #00FFFF; text-shadow: 0 0 5px #00FFFF; }
+.glow-magenta { color: #FF00FF; text-shadow: 0 0 5px #FF00FF; }
+.glow-green { color: #00FF00; text-shadow: 0 0 5px #00FF00; }
+.glow-red { color: #FF0033; text-shadow: 0 0 5px #FF0033; }
+
+/* Печать */
+@media print {
+  body {
+    background: #000;
+    color: #ddd;
+  }
+  
+  body::before, body::after {
+    display: none;
+  }
+  
+  h1, h2, h3 {
+    page-break-after: avoid;
+  }
+  
+  table, .terminal, .alert {
+    page-break-inside: avoid;
+  }
+  
+  h1 {
+    text-shadow: none;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* Заголовок секции с номером */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin: 30px 0 15px;
+}
+
+.section-header::before {
+  content: "▶";
+  color: #FF00FF;
+  font-size: 1.2em;
+}
+
+/* Иконки в тексте */
+.icon { font-size: 1.2em; }
+
+/* Заголовок документа */
+.doc-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 20px;
+  border: 1px dashed #00FFFF;
+  background: rgba(0, 255, 255, 0.03);
+}
+
+.doc-subtitle {
+  color: #00FFFF;
+  font-size: 0.9em;
+  letter-spacing: 4px;
+  margin-top: 10px;
+  text-transform: uppercase;
+}
+
+.warning-box {
+  border: 2px solid #FF0033;
+  background: rgba(255, 0, 51, 0.05);
+  padding: 15px;
+  margin: 20px 0;
+  color: #FF0033;
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: 0 0 5px #FF0033;
+}
+
+.note {
+  border-left: 3px solid #FFD600;
+  background: rgba(255, 214, 0, 0.05);
+  padding: 10px 15px;
+  margin: 15px 0;
+  font-size: 0.9em;
+}
+
+.note::before {
+  content: "💡 ";
+  color: #FFD600;
+}
+
+.program-card {
+  border: 1px solid #FF00FF;
+  background: rgba(255, 0, 255, 0.03);
+  padding: 15px;
+  margin: 20px 0;
+  position: relative;
+}
+
+.program-card::before {
+  content: attr(data-slot);
+  position: absolute;
+  top: -10px;
+  left: 15px;
+  background: #0a0a0f;
+  padding: 0 8px;
+  color: #FF00FF;
+  font-size: 0.8em;
+  letter-spacing: 1px;
+}
+
+.program-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.program-name {
+  font-family: 'Orbitron', monospace;
+  color: #FF00FF;
+  font-size: 1.2em;
+  text-shadow: 0 0 5px rgba(255, 0, 255, 0.7);
+  letter-spacing: 1px;
+}
+
+.program-cost {
+  color: #FFD600;
+  font-weight: bold;
+}
+
+.effect-table {
+  margin-top: 10px;
+}
+
+.effect-table th {
+  background: rgba(255, 0, 255, 0.3);
+  color: #FFD600;
+  font-size: 0.85em;
+}
+
+.footer {
+  margin-top: 50px;
+  padding: 20px;
+  text-align: center;
+  border-top: 1px dashed #FF00FF;
+  color: #FF00FF;
+  font-size: 0.85em;
+  letter-spacing: 2px;
+}
+
+</style>
+</head>
+<body>
+
+<div class="doc-header">
+  <div class="doc-subtitle">▌ СИСТЕМА ДОПОЛНЕНИЯ ▌</div>
+  <h1>WIRELESS DIRECT NEURAL ATTACK</h1>
+  <div class="doc-subtitle">v1.0 | Дополнение к Cyberpunk RED</div>
+</div>
+
+<blockquote>
+  «Зачем мне стрелять, если можно заставить их руки стрелять друг в друга?»<br>
+  — <strong>Валет «Синапс» Ковальски</strong>, нетраннер-фрилансер
+</blockquote>
+
+<h2>📖 ВВЕДЕНИЕ: НЕЙРО-ДИВЕРСИЯ</h2>
+
+<p>Система WDNA позволяет нетраннерам использовать свои навыки <code>Interface</code> в реальном бою без погружения в NET. Это быстрая, грязная и опасная работа — но в Найт-Сити опасность это часть повседневности.</p>
+
+<h3>Когда использовать WDNA</h3>
+
+<p><span class="glow-green">✅ ИДЕАЛЬНО ДЛЯ:</span></p>
+<ul>
+  <li>Нейтрализации опасных киборгов без прямого боя</li>
+  <li>Создания паники в рядах противника</li>
+  <li>Защиты команды (<code>Signal Jam</code>)</li>
+  <li>Похищений и нелетальных операций</li>
+</ul>
+
+<p><span class="glow-red">❌ НЕ РАБОТАЕТ ПРОТИВ:</span></p>
+<ul>
+  <li>Персонажей <strong>без имплантов</strong> (бывает — некоторые Соло старой школы)</li>
+  <li>Имплантов с <code>Hardwired Mod</code> (проводное подключение)</li>
+  <li>Целей в <strong>зоне помех</strong> (Signal Jam, EMP, массивная стальная конструкция)</li>
+</ul>
+
+<h2>🔧 ТРЕБОВАНИЯ ДЛЯ НЕТРАННЕРА</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Требование</th>
+      <th>Минимум</th>
+      <th>Рекомендуется</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Neural Link</strong></td>
+      <td>Базовая версия</td>
+      <td>Версия с процессором</td>
+    </tr>
+    <tr>
+      <td><strong>Бонус процессора</strong></td>
+      <td>+1</td>
+      <td>+2 и выше</td>
+    </tr>
+    <tr>
+      <td><strong>Навык Interface</strong></td>
+      <td>+4</td>
+      <td>+6 и выше</td>
+    </tr>
+    <tr>
+      <td><strong>Слоты программ</strong></td>
+      <td>1</td>
+      <td>2-3</td>
+    </tr>
+    <tr>
+      <td><strong>Кибердек</strong></td>
+      <td>Любой</td>
+      <td>С защитой от обратной связи</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Бросок WDNA</h3>
+
+<div class="terminal">
+> АТАКА: 1d10 + Interface + Бонус процессора ± Модификаторы
+> ЗАЩИТА ЦЕЛИ: 1d10 + Лучшее из (REF или INT) + Защита импланта
+> 
+> УСПЕХ (1+) — минимальный эффект
+> СОЛИДНЫЙ (5+) — полный эффект + бонус
+> КРИТИЧЕСКИЙ (10+) — усиленный эффект
+> ПРОВАЛ — ничего не происходит
+> КРИТИЧЕСКИЙ ПРОВАЛ (1 на d10) — BACKLASH!
+</div>
+
+<h2>🛡️ ЗАЩИТНЫЕ СИСТЕМЫ ЦЕЛИ</h2>
+
+<h3>Личная защита от WDNA</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Защита</th>
+      <th>Цена</th>
+      <th>Эффект</th>
+      <th>Доступность</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Black ICE (Light)</strong></td>
+      <td>500 eb</td>
+      <td>+2 к защите WDNA</td>
+      <td>Обычная</td>
+    </tr>
+    <tr>
+      <td><strong>Black ICE (Heavy)</strong></td>
+      <td>2000 eb</td>
+      <td>+4 к защите, наносит Backlash</td>
+      <td>Обычная</td>
+    </tr>
+    <tr>
+      <td><strong>Bioware Firewall</strong></td>
+      <td>1000-3000 eb</td>
+      <td>+1-3 к защите (имплант)</td>
+      <td>Средняя</td>
+    </tr>
+    <tr>
+      <td><strong>Neural Shield (одноразовый)</strong></td>
+      <td>1000 eb</td>
+      <td>Автоотражение одной атаки</td>
+      <td>Повсеместная</td>
+    </tr>
+    <tr>
+      <td><strong>Hardwired Mod</strong></td>
+      <td>x1.5 к цене импланта</td>
+      <td>Имплант неуязвим</td>
+      <td>Средняя</td>
+    </tr>
+    <tr>
+      <td><strong>Slaved Neural Link</strong></td>
+      <td>+500 eb</td>
+      <td>Защита = защита Линкера</td>
+      <td>Редкая</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Таблица Backlash (критический провал)</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Защита цели</th>
+      <th>Урон хакеру</th>
+      <th>Дополнительный эффект</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Нет защиты</td>
+      <td>1d6</td>
+      <td>Программа крашится</td>
+    </tr>
+    <tr>
+      <td>Black ICE (Light)</td>
+      <td>2d6</td>
+      <td>Программа крашится</td>
+    </tr>
+    <tr>
+      <td>Black ICE (Heavy)</td>
+      <td>3d6</td>
+      <td>Программа крашится + кратковременная слепота</td>
+    </tr>
+    <tr>
+      <td>Bioware Firewall</td>
+      <td>1d6</td>
+      <td>Хакер оглушен на 1 раунд</td>
+    </tr>
+    <tr>
+      <td>Hardwired Mod</td>
+      <td>0</td>
+      <td>Никакого эффекта, но и взлом невозможен</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>💾 ПРОГРАММЫ WDNA</h2>
+
+<div class="alert">
+Все программы занимают слоты в кибердеке. Стандартный нетраннер имеет 2-3 слота. Продвинутые кибердеки — 4-5. Ультимейт-хакеры — до 8.
+</div>
+
+<h3>🥊 СЕКЦИЯ 1: АГРЕССИВНЫЕ ПРОГРАММЫ</h3>
+
+<div class="program-card" data-slot="[СЛОТ 1]">
+  <div class="program-header">
+    <span class="program-name">🔥 NEURAL FEEDBACK</span>
+    <span class="program-cost">500 eb</span>
+  </div>
+  <p><em>«Сделай так, чтобы ему было больно»</em></p>
+  <p><strong>Бросок:</strong> Interface vs защита цели</p>
+  <p><strong>Эффект при успехе:</strong></p>
+  <table class="effect-table">
+    <thead>
+      <tr><th>Результат</th><th>Эффект</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Успех</td><td>1d6 урона (половина реального, половина оглушения)</td></tr>
+      <tr><td>Солидный успех</td><td>2d6 урона</td></tr>
+      <tr><td>Критический успех</td><td>3d6 урона + цель в <strong>шоке</strong> на 1 раунд</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Провал:</strong> Обратная связь 1d6 урона хакеру</p>
+  <p><strong>Особенность:</strong> Работает против ЛЮБОГО импланта, минимальная защита.</p>
+</div>
+
+<div class="program-card" data-slot="[СЛОТ 2]">
+  <div class="program-header">
+    <span class="program-name">⚡ CYBER BURNOUT</span>
+    <span class="program-cost">2000 eb</span>
+  </div>
+  <p><em>«Преврати его гордость в металлолом»</em></p>
+  <p><strong>Бросок:</strong> Interface vs защита цели</p>
+  <p><strong>Эффект при успехе:</strong></p>
+  <table class="effect-table">
+    <thead>
+      <tr><th>Результат</th><th>Эффект</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Успех</td><td>Один имплант выходит из строя (ремонт 1d6 × 500 eb)</td></tr>
+      <tr><td>Солидный успех</td><td>Имплант полностью уничтожен</td></tr>
+      <tr><td>Критический успех</td><td>1d3 импланта выходят из строя</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Провал:</strong> Программа крашится + 1d6 урона хакеру</p>
+  <p><strong>Особенности:</strong></p>
+  <ul>
+    <li>Цель может потерять имплант стоимостью в десятки тысяч евродолларов</li>
+    <li>Отлично работает как <strong>психологическое оружие</strong></li>
+    <li>Может использоваться для уничтожения улик (записи в импланте)</li>
+  </ul>
+</div>
+
+<div class="program-card" data-slot="[СЛОТ 1]">
+  <div class="program-header">
+    <span class="program-name">🌊 PAINWAVE</span>
+    <span class="program-cost">750 eb</span>
+  </div>
+  <p><em>«Не убивай — просто сделай больно»</em></p>
+  <p><strong>Бросок:</strong> Interface vs защита цели</p>
+  <p><strong>Эффект при успехе:</strong></p>
+  <table class="effect-table">
+    <thead>
+      <tr><th>Результат</th><th>Эффект</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Успех</td><td>Цель оглушена на 1d4 раунда, <strong>без урона</strong></td></tr>
+      <tr><td>Солидный успех</td><td>Цель оглушена на 1d6+1 раунда</td></tr>
+      <tr><td>Критический успех</td><td>Цель без сознания на 1d6 раундов (можно обыскать/связать)</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Провал:</strong> Хакер сам оглушен на 1 раунд</p>
+  <p><strong>Идеально для:</strong> Захватов, нелетальных операций, допросов (живую цель проще продать).</p>
+</div>
+
+<h3>🎮 СЕКЦИЯ 2: КОНТРОЛЬНЫЕ ПРОГРАММЫ</h3>
+
+<div class="program-card" data-slot="[СЛОТ 2]">
+  <div class="program-header">
+    <span class="program-name">🤖 HIJACK</span>
+    <span class="program-cost">1500 eb</span>
+  </div>
+  <p><em>«Его рука — теперь моя рука»</em></p>
+  <p><strong>Бросок:</strong> Interface vs защита цели</p>
+  <p><strong>Эффект при успехе:</strong></p>
+  <table class="effect-table">
+    <thead>
+      <tr><th>Результат</th><th>Эффект</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Успех</td><td>Нетраннер <strong>контролирует один имплант</strong> цели на 1 раунд</td></tr>
+      <tr><td>Солидный успех</td><td>Контроль на 2 раунда</td></tr>
+      <tr><td>Критический успех</td><td>Контроль на 3 раунда + имплант работает на 1 SP выше</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Провал:</strong> Контроль теряется сразу + 1d6 урона обратной связи</p>
+  
+  <p><strong>Примеры применения:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Имплант цели</th>
+        <th>Что может сделать хакер</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Кибер-рука с оружием</td>
+        <td>Стрелять в союзников цели</td>
+      </tr>
+      <tr>
+        <td>Кибер-рука обычная</td>
+        <td>Бить, хватать, ломать свое же оружие</td>
+      </tr>
+      <tr>
+        <td>Кибероптика</td>
+        <td>Показать ложную картинку (цель ослеплена эфф.)</td>
+      </tr>
+      <tr>
+        <td>Усилитель ног</td>
+        <td>Прыжок с крыши / невозможность бежать</td>
+      </tr>
+      <tr>
+        <td>Смарт-ган</td>
+        <td>Оружие стреляет куда угодно</td>
+      </tr>
+      <tr>
+        <td>Голосовой модулятор</td>
+        <td>Цель говорит то, что хочет хакер</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <p><strong>Особенности:</strong></p>
+  <ul>
+    <li>Самая <strong>тактически мощная</strong> программа</li>
+    <li>Требует знания о том, какой имплант у цели (Scanner дает +2)</li>
+    <li>Враги со сложной кибернетикой — приоритетная цель</li>
+  </ul>
+</div>
+
+<div class="program-card" data-slot="[СЛОТ 1]">
+  <div class="program-header">
+    <span class="program-name">🔌 SYSTEM OVERRIDE</span>
+    <span class="program-cost">1000 eb</span>
+  </div>
+  <p><em>«Выключи это»</em></p>
+  <p><strong>Бросок:</strong> Interface vs защита цели</p>
+  <p><strong>Эффект при успехе:</strong></p>
+  <table class="effect-table">
+    <thead>
+      <tr><th>Результат</th><th>Эффект</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Успех</td><td>Один имплант <strong>отключается</strong> на 1d6 раундов</td></tr>
+      <tr><td>Солидный успех</td><td>На 2d6 раундов</td></tr>
+      <tr><td>Критический успех</td><td>На 1 минуту (весь бой)</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Провал:</strong> Ничего, но программа крашится</p>
+  
+  <p><strong>Эффекты отключенных имплантов:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Имплант</th>
+        <th>Эффект отключения</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Кибероптика</td>
+        <td>-2 к атакам и проверкам зрения</td>
+      </tr>
+      <tr>
+        <td>Кибер-аудио</td>
+        <td>Глухота (-4 к проверкам слуха)</td>
+      </tr>
+      <tr>
+        <td>Кибер-рука</td>
+        <td>-2 к Strength, невозможно использовать встроенное оружие</td>
+      </tr>
+      <tr>
+        <td>Усилитель ног</td>
+        <td>Скорость бега снижается вдвое</td>
+      </tr>
+      <tr>
+        <td>Субдермальная броня</td>
+        <td>SP уменьшается на 1d3</td>
+      </tr>
+      <tr>
+        <td>Neural Link</td>
+        <td>Цель не может использовать активные импланты</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="program-card" data-slot="[СЛОТ 1]">
+  <div class="program-header">
+    <span class="program-name">👁️‍🗨️ BLIND / 🔇 DEAFEN</span>
+    <span class="program-cost">800 eb</span>
+  </div>
+  <p><em>«Специализация — сила»</em></p>
+  <p><strong>Бросок:</strong> Interface vs защита <strong>только этого</strong> импланта</p>
+  <p><strong>Бонус:</strong> +2 к броску атаки (узкая специализация)</p>
+  <p><strong>Эффект при успехе:</strong></p>
+  <table class="effect-table">
+    <thead>
+      <tr><th>Результат</th><th>Эффект</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Успех</td><td>Имплант отключен на 1d4 раунда</td></tr>
+      <tr><td>Солидный успех</td><td>На 1d6+1 раундов</td></tr>
+      <tr><td>Критический успех</td><td>Имплант <strong>физически поврежден</strong>, требует ремонта 1000 eb</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Особенность:</strong> Не работает против органических глаз/ушей, но если имплант был основным — эффект полный.</p>
+</div>
+
+<h3>🕵️ СЕКЦИЯ 3: УТИЛИТНЫЕ ПРОГРАММЫ</h3>
+
+<div class="program-card" data-slot="[СЛОТ 1]">
+  <div class="program-header">
+    <span class="program-name">🔍 SCANNER</span>
+    <span class="program-cost">500 eb</span>
+  </div>
+  <p><em>«Знай своего врага»</em></p>
+  <p><strong>Бросок:</strong> Interface vs INT цели</p>
+  <p><strong>Эффект при успехе:</strong></p>
+  <ul>
+    <li>Хакер узнает <strong>все импланты</strong> цели и их <strong>уровень защиты</strong></li>
+    <li><strong>Солидный успех:</strong> Дополнительно — одну <strong>слабость</strong> цели</li>
+    <li><strong>Критический успех:</strong> Все импланты + точные характеристики + уязвимости</li>
+  </ul>
+  <p><strong>Провал:</strong> Цель понимает, что ее сканируют</p>
+  <p><strong>Бонусы от знания имплантов:</strong></p>
+  <ul>
+    <li>+1 к атаке по <strong>слабому импланту</strong></li>
+    <li>+2 к атаке по импланту с <strong>известной уязвимостью</strong> (старый, плохо обслуженный, контрафактный)</li>
+  </ul>
+</div>
+
+<div class="program-card" data-slot="[СЛОТ 1]">
+  <div class="program-header">
+    <span class="program-name">📡 SIGNAL JAM</span>
+    <span class="program-cost">600 eb</span>
+  </div>
+  <p><em>«Война — это помехи»</em></p>
+  <p><strong>Бросок:</strong> Не требуется (пассивная)</p>
+  <p><strong>Эффект:</strong></p>
+  <ul>
+    <li>Создает <strong>зону помех</strong> радиусом <strong>10 метров</strong></li>
+    <li>Длительность: <strong>1d6 раундов</strong></li>
+    <li>Все импланты в зоне работают с <strong>штрафом -1</strong></li>
+    <li>Смарт-ганы получают -2 к точности</li>
+    <li>WDNA-атаки в зоне <strong>невозможны</strong> (включая свои)</li>
+  </ul>
+  <p><strong>Особенности:</strong></p>
+  <ul>
+    <li>Можно использовать <strong>до боя</strong> для подготовки</li>
+    <li>Задевает <strong>и союзников</strong> (если у них есть импланты)</li>
+    <li>Можно прервать одним действием (Move)</li>
+  </ul>
+</div>
+
+<div class="program-card" data-slot="[СЛОТ 1]">
+  <div class="program-header">
+    <span class="program-name">🎯 CYBER AIM</span>
+    <span class="program-cost">1200 eb</span>
+  </div>
+  <p><em>«Твой глаз — мой прицел»</em></p>
+  <p><strong>Бросок:</strong> Interface vs защита кибероптики</p>
+  <p><strong>Эффект при успехе:</strong></p>
+  <ul>
+    <li><strong>Успех:</strong> Хакер <strong>видит глазами цели</strong> на 1d4 раунда</li>
+    <li><strong>Солидный успех:</strong> + видит данные из имплантов (здоровье, оружие, патроны)</li>
+    <li><strong>Критический успех:</strong> Может <strong>управлять направлением взгляда</strong> цели</li>
+  </ul>
+  <p><strong>Провал:</strong> 1d6 урона + головная боль на 1 час</p>
+  <p><strong>Идеально для:</strong> Разведки, контр-снайперской работы.</p>
+</div>
+
+<h3>🗡️ СЕКЦИЯ 4: ПРОДВИНУТЫЕ ПРОГРАММЫ</h3>
+
+<div class="warning-box">
+⚠ ДЛЯ ОПЫТНЫХ НЕТРАННЕРОВ (Interface +6 и выше) ⚠
+</div>
+
+<div class="program-card" data-slot="[СЛОТ 3]">
+  <div class="program-header">
+    <span class="program-name">💀 CRASH OVERRIDE</span>
+    <span class="program-cost">5000 eb</span>
+  </div>
+  <p><em>«Убей его цифровую душу»</em></p>
+  <p><strong>Требование:</strong> Interface +6 и выше</p>
+  <p><strong>Бросок:</strong> Interface vs защита Neural Link цели</p>
+  <p><strong>Эффект при успехе:</strong></p>
+  <table class="effect-table">
+    <thead>
+      <tr><th>Результат</th><th>Эффект</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Успех</td><td>3d6 урона, все импланты -2 на 1d6 раундов</td></tr>
+      <tr><td>Солидный успех</td><td>5d6 урона, импланты -3 на 1d6 раундов</td></tr>
+      <tr><td>Критический успех</td><td><strong>8d6 урона</strong> + шок на 2 раунда</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Провал:</strong> <strong>4d6 урона</strong> хакеру + потеря сознания на 1 раунд</p>
+  <p><strong>Особенности:</strong> Самая разрушительная программа. Смертельно опасна при провале. Требует Neural Link у цели.</p>
+</div>
+
+<div class="program-card" data-slot="[СЛОТ 3]">
+  <div class="program-header">
+    <span class="program-name">⛓️ CHAIN LIGHTNING</span>
+    <span class="program-cost">3500 eb</span>
+  </div>
+  <p><em>«Один за всех, и все за одного»</em></p>
+  <p><strong>Бросок:</strong> Interface vs лучшая защита в зоне</p>
+  <p><strong>Эффект при успехе:</strong></p>
+  <ul>
+    <li>Атакует <strong>1d3+1 целей</strong> в радиусе 30 метров</li>
+    <li>Каждая следующая цель получает штраф -2</li>
+    <li>Применяется <strong>одна выбранная</strong> программа ко всем целям</li>
+  </ul>
+  <p><strong>Провал:</strong> Только первая цель получает защиту, остальные <strong>автоматически</strong> имеют 1d6 урона обратной связи.</p>
+</div>
+
+<div class="program-card" data-slot="[СЛОТ 1]">
+  <div class="program-header">
+    <span class="program-name">👻 GHOST PROTOCOL</span>
+    <span class="program-cost">2000 eb</span>
+  </div>
+  <p><em>«Меня не существует»</em></p>
+  <p><strong>Бросок:</strong> Не требуется</p>
+  <p><strong>Эффект:</strong></p>
+  <ul>
+    <li>Все WDNA-атаки хакера получают <strong>+2 к скрытности</strong></li>
+    <li>Цель <strong>не может определить</strong>, откуда идет атака</li>
+    <li>Враги не могут <strong>целенаправленно</strong> атаковать хакера</li>
+    <li>Длительность: 1d6 раундов</li>
+  </ul>
+</div>
+
+<h2>📊 СВОДНАЯ ТАБЛИЦА ПРОГРАММ</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Название</th>
+      <th>Слот</th>
+      <th>Цена</th>
+      <th>Тип</th>
+      <th>Эффект (базовый)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Neural Feedback</td>
+      <td>1</td>
+      <td>500</td>
+      <td>Атака</td>
+      <td>1d6 урона</td>
+    </tr>
+    <tr>
+      <td>Cyber Burnout</td>
+      <td>2</td>
+      <td>2000</td>
+      <td>Атака</td>
+      <td>Уничтожение импланта</td>
+    </tr>
+    <tr>
+      <td>Painwave</td>
+      <td>1</td>
+      <td>750</td>
+      <td>Атака</td>
+      <td>Оглушение</td>
+    </tr>
+    <tr>
+      <td>Hijack</td>
+      <td>2</td>
+      <td>1500</td>
+      <td>Контроль</td>
+      <td>Управление имплантом</td>
+    </tr>
+    <tr>
+      <td>System Override</td>
+      <td>1</td>
+      <td>1000</td>
+      <td>Контроль</td>
+      <td>Отключение импланта</td>
+    </tr>
+    <tr>
+      <td>Blind</td>
+      <td>1</td>
+      <td>800</td>
+      <td>Контроль</td>
+      <td>Отключение оптики</td>
+    </tr>
+    <tr>
+      <td>Deafen</td>
+      <td>1</td>
+      <td>800</td>
+      <td>Контроль</td>
+      <td>Отключение аудио</td>
+    </tr>
+    <tr>
+      <td>Scanner</td>
+      <td>1</td>
+      <td>500</td>
+      <td>Утилита</td>
+      <td>Разведка</td>
+    </tr>
+    <tr>
+      <td>Signal Jam</td>
+      <td>1</td>
+      <td>600</td>
+      <td>Утилита</td>
+      <td>Зона помех</td>
+    </tr>
+    <tr>
+      <td>Cyber Aim</td>
+      <td>1</td>
+      <td>1200</td>
+      <td>Утилита</td>
+      <td>Видеть глазами цели</td>
+    </tr>
+    <tr>
+      <td>Crash Override</td>
+      <td>3</td>
+      <td>5000</td>
+      <td>Продв.</td>
+      <td>3d6 урона + дебафф</td>
+    </tr>
+    <tr>
+      <td>Chain Lightning</td>
+      <td>3</td>
+      <td>3500</td>
+      <td>Продв.</td>
+      <td>Мульти-атака</td>
+    </tr>
+    <tr>
+      <td>Ghost Protocol</td>
+      <td>1</td>
+      <td>2000</td>
+      <td>Продв.</td>
+      <td>Скрытность</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>⚖️ БАЛАНСИРОВКА: ПРАВИЛА ДЛЯ МАСТЕРА</h2>
+
+<h3>Правило 1: Одна атака за раунд</h3>
+<p>WDNA — это <strong>Action</strong>, как и стрельба. Нетраннер не может WDNA-атаковать и стрелять одновременно.</p>
+
+<h3>Правило 2: Программы занимают слоты</h3>
+<p>Стандартный нетраннер имеет 2-3 слота. Каждая программа занимает 1-3 слота. <strong>Выбор критичен</strong>.</p>
+
+<h3>Правило 3: Backlash может убить</h3>
+<p>При провале против Heavy ICE нетраннер получает 3d6 урона. У нетраннеров мало HP. Это <strong>реальная опасность</strong>.</p>
+
+<h3>Правило 4: Hardwired — иммунитет</h3>
+<p>Любой серьёзный противник может иметь хотя бы один Hardwired имплант. WDNA — <strong>не панацея</strong>.</p>
+
+<h3>Правило 5: Действия выдают хакера</h3>
+<p>WDNA-атака создаёт <strong>электромагнитный всплеск</strong>, который можно засечь. Корпорации могут <strong>вычислить</strong> хакера.</p>
+
+<h3>Правило 6: Цель знает об атаке</h3>
+<p>Жертва <strong>чувствует</strong> вмешательство. Это создаёт напряжение — враг принимает меры.</p>
+
+<div class="note">
+Стандартный Кибердек имеет 2-3 слота. Продвинутые (Netrunner Net Architecture, 2023) — 4-5. Ультимейт-хакеры — до 8.
+</div>
+
+<h2>📜 ГОТОВЫЕ СЦЕНАРИИ</h2>
+
+<h3>Сценарий 1: "Гонка за имплантом"</h3>
+<p><strong>Ситуация:</strong> Команда преследует беглеца — беглого корпоративного учёного с уникальным имплантом-хранилищем данных. У него Heavy Black ICE.</p>
+<p><strong>Применение WDNA:</strong></p>
+<ol>
+  <li><strong>Раунд 1:</strong> Scanner — узнать, где имплант и его защиту.</li>
+  <li><strong>Раунд 2:</strong> Cyber Burnout — вырубить имплант, чтобы он не мог уничтожить данные.</li>
+  <li><strong>Раунд 3:</strong> Если не получилось — Hijack на ноги (заставить споткнуться).</li>
+</ol>
+
+<h3>Сценарий 2: "Переговоры с киборгом"</h3>
+<p><strong>Ситуация:</strong> Нетраннер должен <strong>не убить</strong> опасного киборга, а <strong>заставить его сотрудничать</strong>.</p>
+<p><strong>Применение WDNA:</strong></p>
+<ol>
+  <li><strong>Round 1:</strong> Scanner — разведать все импланты.</li>
+  <li><strong>Round 2:</strong> Painwave — оглушить.</li>
+  <li><strong>Если не сработало:</strong> Hijack на смарт-ган — направить на его друзей.</li>
+</ol>
+
+<h3>Сценарий 3: "Корпоративный рейд"</h3>
+<p><strong>Ситуация:</strong> 6 охранников, у каждого Hardwired Mod на основном Neural Link, но остальные импланты уязвимы.</p>
+<p><strong>Применение WDNA:</strong></p>
+<ol>
+  <li><strong>Signal Jam</strong> в коридоре — не могут вызвать подкрепление.</li>
+  <li><strong>Chain Lightning</strong> с Neural Feedback — массовая атака.</li>
+  <li><strong>Ghost Protocol</strong> — хакер остаётся незамеченным.</li>
+</ol>
+
+<h2>🎴 БЫСТРАЯ ШПАРГАЛКА ДЛЯ ИГРОКОВ</h2>
+
+<div class="terminal">
+╔═══════════════════════════════════════════╗
+║ ПЕРЕД БОЕМ:                              ║
+║ [✓] Программы загружены                  ║
+║ [✓] Neural Link на месте                 ║
+║ [✓] Узнать про Hardwired Mod             ║
+║ [✓] Подумать о Ghost Protocol            ║
+║                                           ║
+║ В БОЮ:                                    ║
+║ 1. Scanner / Signal Jam                   ║
+║ 2. Hijack > Burnout > Feedback            ║
+║ 3. Импровизация                          ║
+║                                           ║
+║ НЕ ИСПОЛЬЗОВАТЬ WDNA:                    ║
+║ [✗] Hardwired импланты                   ║
+║ [✗] Полный хаос в команде                ║
+║ [✗] Много полученного урона              ║
+║ [✗] Враг без имплантов                   ║
+╚═══════════════════════════════════════════╝
+</div>
+
+<h2>🌃 ПРИМЕР ПЕРСОНАЖА: ВАЛЕТ "СИНАПС" КОВАЛЬСКИ</h2>
+
+<div class="program-card" data-slot="[NETRUNNER]">
+  <p><strong>РОЛЬ:</strong> Нетраннер-полевой хакер</p>
+  <p><strong>СТАТ:</strong> INT 8, REF 5, COOL 7, TECH 5, ATTR 4, LUCK 5, MA 4, BODY 4, EMP 6</p>
+  <p><strong>НАВЫКИ:</strong> Interface +7, Концентрация +6, Скрытность +4, Программирование +5</p>
+  
+  <p><strong>ИМПЛАНТЫ:</strong></p>
+  <ul>
+    <li>Neural Link (с процессором +2)</li>
+    <li>Кибердек (3 слота)</li>
+    <li>Кибероптика (Light ICE)</li>
+    <li>Кожа-металл (1 SP)</li>
+    <li>Chipware Socket</li>
+  </ul>
+  
+  <p><strong>ЗАГРУЖЕННЫЕ ПРОГРАММЫ (3/3 слотов):</strong></p>
+  <ol>
+    <li><strong>Hijack</strong> (2 слота) — основная атака</li>
+    <li><strong>Cyber Burnout</strong> (1 слот) — для важных целей</li>
+  </ol>
+  
+  <p><strong>В КАРМАНЕ (для быстрой замены):</strong></p>
+  <ul>
+    <li>Scanner</li>
+    <li>Signal Jam</li>
+    <li>Painwave</li>
+  </ul>
+  
+  <p><strong>СНАРЯЖЕНИЕ:</strong> Пистолет (на крайний случай), аптечка, сотовый телефон.</p>
+  <p><strong>ИСТОРИЯ:</strong> Бывший корпоративный программист, ушедший в подполье после того, как узнал слишком много. Специализируется на "мокрых" операциях.</p>
+</div>
+
+<div class="footer">
+▌ END OF DOCUMENT ▌<br>
+WDNA v1.0 — Cyberpunk RED Дополнение<br>
+Удачи в Найт-Сити, чомбата! 🌃
+</div>
+
+</body>
+</html>
